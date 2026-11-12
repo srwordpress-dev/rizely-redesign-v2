@@ -1,11 +1,9 @@
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { DASHBOARD_URL, WHATSAPP_URL } from "@/lib/site";
 import { ArrowRight, CalendarDays, Check, Compass, CreditCard } from "lucide-react";
-import { WhatsAppIcon } from "@/components/whatsapp-icon";
 import HeroParticles from "@/components/hero-particles";
 import HeroTapSnap from "@/components/hero-tap-snap";
 import Scribble from "@/components/scribble";
+import { StartCta } from "@/components/start-cta";
 import { NARROW_STAGE, WIDE_STAGE } from "@/lib/hero-anim";
 
 /*
@@ -120,31 +118,13 @@ export default function Hero() {
             </p>
 
             <div data-hero-ctas className="flex w-full flex-col items-stretch gap-3 sm:w-auto sm:flex-row">
-              {/* Phones (under 640px) start on WhatsApp, where the free scans run; wider
-                  screens sign up in the app. Both are in the HTML and CSS shows one. */}
-              <Button
-                asChild
-                size="lg"
-                className="cta-sunrise h-14 px-8 text-base font-semibold w-full sm:hidden"
-              >
-                <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
-                  <WhatsAppIcon className="size-5" />
-                  Start free on WhatsApp
-                </Link>
-              </Button>
-              <Button
-                asChild
-                size="lg"
-                className="cta-sunrise h-14 px-8 text-lg font-semibold hidden sm:inline-flex sm:w-auto"
-              >
-                <Link href={DASHBOARD_URL} target="_blank" rel="noopener noreferrer">
-                  Start free: 50 scans
-                </Link>
-              </Button>
+              {/* Phones: "Start on your WhatsApp"; 640px and up: "Start free" (start-cta.tsx). */}
+              <StartCta size="lg" className="h-14 w-full px-8 text-base font-semibold sm:w-auto sm:text-lg" />
             </div>
 
             <p className="text-sm text-muted-foreground">
-              First 50 scans free. No card or credit card needed to start.
+              <span className="sm:hidden">First 50 scans free, right inside WhatsApp. No card needed.</span>
+              <span className="hidden sm:inline">First 50 scans free. No card or credit card needed to start.</span>
             </p>
           </div>
         </div>

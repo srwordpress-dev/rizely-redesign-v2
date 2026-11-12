@@ -5,7 +5,7 @@ import CtaNudge from "@/components/cta-nudge";
 import { Providers } from "./providers";
 import NavBar from "@/components/navbar";
 import StructuredData from "@/components/structured-data";
-import { Bricolage_Grotesque, Instrument_Sans, Kalam } from "next/font/google";
+import { Bricolage_Grotesque, Hind_Vadodara, Instrument_Sans, Kalam, Mukta } from "next/font/google";
 import { SITE_URL } from "@/lib/site";
 
 // Display headings (DESIGN.md section 2): Bricolage Grotesque, variable weight.
@@ -21,6 +21,23 @@ const hand = Kalam({
   subsets: ["latin"],
   weight: ["400"],
   variable: "--font-hand",
+  display: "swap",
+  preload: false,
+});
+
+// Indian scripts for the few words set in them (the footer's "Follow-ups in"
+// stamp). From Indian foundries (Ek Type, Indian Type Foundry); not preloaded.
+const deva = Mukta({
+  subsets: ["devanagari"],
+  weight: ["700"],
+  variable: "--font-deva",
+  display: "swap",
+  preload: false,
+});
+const guj = Hind_Vadodara({
+  subsets: ["gujarati"],
+  weight: ["700"],
+  variable: "--font-guj",
   display: "swap",
   preload: false,
 });
@@ -79,7 +96,7 @@ export default function RootLayout({
       suppressHydrationWarning
       data-currency="usd"
     >
-      <body className={`${display.variable} ${body.variable} ${hand.variable} antialiased`}>
+      <body className={`${display.variable} ${body.variable} ${hand.variable} ${deva.variable} ${guj.variable} antialiased`}>
         {/* These sit at the top of <body>, not in <head>: Netlify injects an HTML comment into
             <head> on some sites, and React then finds that comment where it expected this script,
             fails hydration (#418) and re-renders the document, which drops data-currency. At the

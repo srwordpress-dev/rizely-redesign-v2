@@ -79,38 +79,57 @@ const tools: Tool[] = [
   },
 ];
 
+/*
+  The strip moves (Nov 2026): four identical copies of the five chips slide left
+  in a loop, one set width per cycle, so the seam never shows. Pointing at it
+  pauses it (mouse only); a chip still takes its brand colour on hover. With
+  reduced motion it is the plain centred row it was before. Copies 2-4 are
+  aria-hidden, so screen readers hear each tool once.
+*/
+const COPIES = 4;
+
+function Chip({ tool }: { tool: Tool }) {
+  return (
+    <li
+      className="partner-chip flex shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-muted-foreground"
+      style={{ ["--brand" as string]: tool.brand }}
+    >
+      {tool.svg}
+      <span className="text-sm font-medium whitespace-nowrap">{tool.name}</span>
+      {tool.note && (
+        <span className="rounded-full border border-border px-2 py-0.5 text-xs">{tool.note}</span>
+      )}
+    </li>
+  );
+}
+
 export default function Partners() {
   return (
-    <section className="max-w-(--breakpoint-lg) w-full mx-auto px-4 py-16 gap-8 md:px-8 flex flex-col justify-center items-center text-center">
+    <section className="w-full py-16 flex flex-col items-center gap-6 text-center">
       <motion.p
         initial={{ y: 20, opacity: 0, filter: "blur(3px)" }}
         whileInView={{ y: 0, opacity: 1, filter: "blur(0px)" }}
         viewport={{ once: true }}
         transition={{ duration: 0.5, type: "spring", bounce: 0 }}
-        className="text-sm uppercase tracking-widest text-muted-foreground"
+        className="px-4 text-sm uppercase tracking-widest text-muted-foreground"
       >
         Works where you already are
       </motion.p>
-      <div className="w-full flex flex-wrap justify-center items-center gap-3">
-        {tools.map((tool, index) => (
-          <motion.div
-            key={tool.name}
-            initial={{ y: 20, opacity: 0 }}
-            whileInView={{ y: 0, opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8, delay: index * 0.08, type: "spring", bounce: 0 }}
-            className="partner-chip flex items-center gap-2 rounded-full px-3.5 py-2 text-muted-foreground"
-            style={{ ["--brand" as string]: tool.brand }}
-          >
-            {tool.svg}
-            <span className="text-sm font-medium">{tool.name}</span>
-            {tool.note && (
-              <span className="rounded-full border border-border px-2 py-0.5 text-xs">
-                {tool.note}
-              </span>
-            )}
-          </motion.div>
-        ))}
+      <div className="partner-marquee max-w-(--breakpoint-xl) w-full">
+        <div className="partner-track">
+          {Array.from({ length: COPIES }, (_, copy) => (
+            <ul
+              key={copy}
+              className="partner-set"
+              aria-label={copy === 0 ? "Works with" : undefined}
+              aria-hidden={copy === 0 ? undefined : true}
+            >
+              {tools.map((tool) => (
+                <Chip key={tool.name} tool={tool} />
+              ))}
+            </ul>
+          ))}
+        </div>
       </div>
     </section>
   );

@@ -6,6 +6,7 @@ import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { SHOP_URL, WHATSAPP_URL } from "@/lib/site";
 import "@/app/use-cases.css";
+import { StartCta } from "@/components/start-cta";
 
 /*
   05 · Use cases. Three cards, each opening with a small drawn scene
@@ -41,7 +42,7 @@ const personas: Persona[] = [
       inr: <>Best fit: <b>Solo ₹3,499/yr</b> or an Event Pass (proposed)</>,
       usd: <>Best fit: <b>Solo $79/yr</b> or an Event Pass (proposed)</>,
     },
-    cta: "Start free on WhatsApp",
+    cta: "start",
     href: WHATSAPP_URL,
     secondary: { label: "See pricing", href: "#pricing" },
   },
@@ -55,7 +56,7 @@ const personas: Persona[] = [
       inr: <>Best fit: <b>Event Pass ₹2,499</b> for 5 seats (proposed)</>,
       usd: <>Best fit: <b>Event Pass $49</b> for 5 seats (proposed)</>,
     },
-    cta: "Start free on WhatsApp",
+    cta: "start",
     href: WHATSAPP_URL,
     secondary: { label: "See pricing", href: "#pricing" },
   },
@@ -189,11 +190,16 @@ export default function Personas() {
                 <span data-price="usd">{p.fit.usd}</span>
               </p>
               <div className="mt-auto flex flex-wrap gap-3 pt-1">
-                <Button asChild className="cta-sunrise">
-                  <Link href={p.href} target="_blank" rel="noopener noreferrer">
-                    {p.cta}
-                  </Link>
-                </Button>
+                {/* "start" = the shared CTA: WhatsApp on phones, "Start free" from 640px. */}
+                {p.cta === "start" ? (
+                  <StartCta />
+                ) : (
+                  <Button asChild className="cta-sunrise">
+                    <Link href={p.href} target="_blank" rel="noopener noreferrer">
+                      {p.cta}
+                    </Link>
+                  </Button>
+                )}
                 <Button asChild variant="outline">
                   <Link href={p.secondary.href}>{p.secondary.label}</Link>
                 </Button>

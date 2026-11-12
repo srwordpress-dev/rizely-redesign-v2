@@ -109,22 +109,24 @@ export default function WhyRizely() {
           </p>
         </motion.div>
 
-        <ol className="lg:col-span-8 border-t border-line">
-          {points.map((p, index) => (
-            <motion.li
+        {/* Each row's top rule is drawn by components/motion.tsx (GSAP); without JS
+            or with reduced motion the rules and rows are simply there. */}
+        <ol className="lg:col-span-8 border-b border-[var(--line-strong)]">
+          {points.map((p) => (
+            <li
               key={p.title}
-              initial={{ y: 16, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              viewport={{ once: true, margin: "-60px" }}
-              transition={{ duration: 0.5, delay: index * 0.06, type: "spring", bounce: 0 }}
-              className="grid gap-5 border-b border-line py-8 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-10"
+              data-wr-row
+              className="relative grid gap-5 py-8 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-10"
             >
-              <div className="flex flex-col gap-2">
+              <span aria-hidden="true" className="wr-rule" />
+              <div data-wr-body className="flex flex-col gap-2">
                 <h3 className="font-serif-display text-2xl leading-tight sm:text-[1.75rem]">{p.title}</h3>
                 <p className="max-w-lg text-[15px] leading-relaxed text-muted-foreground">{p.desc}</p>
               </div>
-              <p.Vis />
-            </motion.li>
+              <div data-wr-body>
+                <p.Vis />
+              </div>
+            </li>
           ))}
         </ol>
       </div>

@@ -3,10 +3,11 @@
 import { Button } from "@/components/ui/button";
 import { HamburgerMenuIcon, Cross1Icon } from "@radix-ui/react-icons";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { DASHBOARD_URL, WHATSAPP_URL } from "@/lib/site";
+import { DASHBOARD_URL } from "@/lib/site";
 import { RizelyLogo } from "@/components/logo";
+import { StartCta } from "@/components/start-cta";
 
 // Absolute hrefs, not bare "#how": these render on /blogs and /privacy too,
 // where a bare hash would resolve to /blogs#how and go nowhere.
@@ -32,6 +33,108 @@ export default function NavBar() {
   }, []);
 
   const showNavbarBlur = isScrolled || isMenuOpen;
+
+  /*
+    GSAP micro-interactions (Nov 2026). GSAP loads after the page is up; until
+    then (and with reduced motion) the links keep their plain CSS hover.
+      - one pill slides behind whichever link the pointer is on
+      - the "Start free" button leans a few px toward the pointer
+      - in-page links scroll smoothly, clearing the sticky bar; a click presses the pill
+      - the mobile menu's links arrive one after another
+  */
+  type G = typeof import("gsap").gsap;
+  const gsapRef = useRef<G | null>(null);
+  const linksRef = useRef<HTMLDivElement>(null);
+  const pillRef = useRef<HTMLSpanElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const fine = useRef(false);
+  const reduce = useRef(true);
+
+  useEffect(() => {
+    let alive = true;
+    reduce.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    fine.current = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    if (reduce.current) return;
+    (async () => {
+      const [{ gsap }, { ScrollToPlugin }] = await Promise.all([
+        import("gsap"),
+        import("gsap/ScrollToPlugin"),
+      ]);
+      if (!alive) return;
+      gsap.registerPlugin(ScrollToPlugin);
+      gsapRef.current = gsap;
+      linksRef.current?.setAttribute("data-gsap", "");
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const movePill = (el: HTMLElement) => {
+    const g = gsapRef.current;
+    const pill = pillRef.current;
+    const box = linksRef.current;
+    if (!g || !pill || !box || !fine.current) return;
+    const r = el.getBoundingClientRect();
+    const b = box.getBoundingClientRect();
+    const first = pill.style.opacity === "" || pill.style.opacity === "0";
+    g.to(pill, {
+      x: r.left - b.left,
+      width: r.width,
+      opacity: 1,
+      duration: first ? 0 : 0.35,
+      ease: "expo.out",
+      overwrite: "auto",
+    });
+  };
+  const hidePill = () => {
+    const g = gsapRef.current;
+    if (g && pillRef.current) g.to(pillRef.current, { opacity: 0, duration: 0.2, ease: "power1.out" });
+  };
+
+  const onLinkClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    const g = gsapRef.current;
+    if (g && pillRef.current && fine.current) {
+      g.fromTo(pillRef.current, { scale: 0.92 }, { scale: 1, duration: 0.35, ease: "expo.out" });
+    }
+    // Smooth-scroll only for anchors on this page; everything else navigates as usual.
+    if (!g || !href.startsWith("/#") || window.location.pathname !== "/") return;
+    const target = document.querySelector(href.slice(1));
+    if (!target) return;
+    e.preventDefault();
+    setIsMenuOpen(false);
+    g.to(window, { duration: 0.9, ease: "power3.inOut", scrollTo: { y: target, offsetY: 72 } });
+    history.replaceState(null, "", href.slice(1));
+  };
+
+  const onCtaMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const g = gsapRef.current;
+    const el = ctaRef.current;
+    if (!g || !el || !fine.current) return;
+    const r = el.getBoundingClientRect();
+    const dx = (e.clientX - (r.left + r.width / 2)) * 0.18;
+    const dy = (e.clientY - (r.top + r.height / 2)) * 0.3;
+    g.to(el, { x: Math.max(-6, Math.min(6, dx)), y: Math.max(-4, Math.min(4, dy)), duration: 0.3, ease: "power3.out" });
+  };
+  const onCtaLeave = () => {
+    const g = gsapRef.current;
+    if (g && ctaRef.current) g.to(ctaRef.current, { x: 0, y: 0, duration: 0.5, ease: "expo.out" });
+  };
+
+  // Mobile menu: links arrive one after another once the panel opens.
+  useEffect(() => {
+    const g = gsapRef.current;
+    if (!isMenuOpen || !g || !menuRef.current) return;
+    g.from(menuRef.current.querySelectorAll("[data-menu-item]"), {
+      y: 10,
+      opacity: 0,
+      duration: 0.35,
+      ease: "expo.out",
+      stagger: 0.04,
+      delay: 0.08,
+    });
+  }, [isMenuOpen]);
 
   return (
     <>
@@ -80,15 +183,27 @@ export default function NavBar() {
 
           {/* Logo + six links + the CTA need roughly 900px, so the full row starts at
               lg (1024px); below that it is the hamburger menu (W-30). */}
-          <div className="hidden lg:flex items-center space-x-6">
+          <div
+            ref={linksRef}
+            onMouseLeave={hidePill}
+            className="nav-links relative hidden lg:flex items-center space-x-6"
+          >
+            <span ref={pillRef} aria-hidden="true" className="nav-pill" />
             {menuItems.map((item) => (
-              <Button key={item.name} asChild variant="ghost" size="sm">
-                <Link href={item.href}>{item.name}</Link>
+              <Button key={item.name} asChild variant="ghost" size="sm" className="relative">
+                <Link
+                  href={item.href}
+                  onMouseEnter={(e) => movePill(e.currentTarget)}
+                  onFocus={(e) => movePill(e.currentTarget)}
+                  onClick={(e) => onLinkClick(e, item.href)}
+                >
+                  {item.name}
+                </Link>
               </Button>
             ))}
           </div>
 
-          <div className="flex items-center">
+          <div ref={ctaRef} onMouseMove={onCtaMove} onMouseLeave={onCtaLeave} className="flex items-center">
             {/* One filled button, for new visitors; it opens the app, where sign-up lives. */}
             <Button asChild size="sm" className="hidden lg:flex">
               <Link href={DASHBOARD_URL} target="_blank" rel="noopener noreferrer">
@@ -107,39 +222,25 @@ export default function NavBar() {
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="lg:hidden overflow-hidden"
             >
-              <div className="px-2 pt-2 pb-4 space-y-1">
+              <div ref={menuRef} className="px-2 pt-2 pb-4 space-y-1">
                 {menuItems.map((item) => (
                   <Link
                     key={item.name}
                     href={item.href}
+                    data-menu-item
                     className="flex min-h-11 items-center px-3 py-2 text-base font-medium text-foreground hover:bg-muted rounded-md transition-colors"
-                    onClick={() => setIsMenuOpen(false)}
+                    onClick={(e) => {
+                      onLinkClick(e, item.href);
+                      setIsMenuOpen(false);
+                    }}
                   >
                     {item.name}
                   </Link>
                 ))}
-                {/* The menu shows below lg. Its CTA follows the hero (hero.tsx): WhatsApp on
-                    phones (under 640px), the dashboard on tablets. */}
-                <Button asChild size="sm" className="w-full mt-2 sm:hidden">
-                  <Link
-                    href={WHATSAPP_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Start free on WhatsApp
-                  </Link>
-                </Button>
-                <Button asChild size="sm" className="w-full mt-2 hidden sm:flex">
-                  <Link
-                    href={DASHBOARD_URL}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Start free
-                  </Link>
-                </Button>
+                {/* The menu shows below lg. Same CTA as the hero (start-cta.tsx). */}
+                <div className="flex flex-col pt-2">
+                  <StartCta size="sm" className="w-full" onClick={() => setIsMenuOpen(false)} />
+                </div>
               </div>
             </motion.div>
           )}

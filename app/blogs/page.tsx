@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import Footer from "@/components/footer";
-import { PostCard } from "@/components/blog/post-list";
+import Link from "next/link";
+import { PostFeature, PostRow } from "@/components/blog/post-list";
+import PageHero from "@/components/page-hero";
+import Motion from "@/components/motion";
 import { BRAND, OG_IMAGE, SITE_URL } from "@/lib/site";
 import { getArticles } from "@/lib/strapi";
 
@@ -27,36 +30,48 @@ export const metadata: Metadata = {
 export default async function BlogIndex() {
   const posts = await getArticles();
 
+  const [first, ...rest] = posts;
+
   return (
     <main className="flex min-h-dvh flex-col">
-      <section className="mx-auto w-full max-w-6xl px-4 pt-14 pb-20 md:px-8 md:pt-20">
-        <header className="flex flex-col gap-4">
-          <span className="w-fit rounded-full border border-border bg-card px-3 py-1 text-xs text-muted-foreground sm:text-sm">
-            {BRAND} blog
-          </span>
-          <h1 className="max-w-3xl text-4xl font-bold leading-[1.1] tracking-tight text-balance md:text-5xl">
-            Notes on turning event conversations into customers
-          </h1>
-          <p className="max-w-2xl text-base leading-relaxed text-muted-foreground text-pretty sm:text-lg">
-            {DESCRIPTION}
-          </p>
-        </header>
+      <PageHero
+        kicker={`${BRAND} blog`}
+        title={
+          <>
+            Notes on turning event conversations into customers<span className="text-spark">.</span>
+          </>
+        }
+        lede={DESCRIPTION}
+      />
 
+      <section className="mx-auto w-full max-w-(--breakpoint-xl) px-4 pb-24 md:px-8">
         {posts.length === 0 ? (
-          <p className="mt-14 max-w-md rounded-lg border border-border bg-card/50 p-6 text-sm text-muted-foreground">
-            No posts published yet. Check back shortly.
-          </p>
+          <div className="flex flex-col items-start gap-4 border-t border-hairline pt-10">
+            <p className="font-serif-display text-2xl leading-snug">The first notes are being written.</p>
+            <p className="max-w-xl text-muted-foreground">
+              Meanwhile, the homepage shows how one card becomes a follow-up in about a minute.
+            </p>
+            <Link href="/#how" className="blog-more">
+              See how it works <span aria-hidden="true">→</span>
+            </Link>
+          </div>
         ) : (
-          <ul className="mt-12 grid gap-6 sm:grid-cols-2 md:mt-14 lg:grid-cols-3">
-            {posts.map((post) => (
-              <li key={post.documentId ?? post.slug} className="flex">
-                <PostCard post={post} />
-              </li>
-            ))}
-          </ul>
+          <div className="flex flex-col gap-12">
+            <PostFeature post={first} />
+            {rest.length > 0 ? (
+              <ul className="border-b border-hairline">
+                {rest.map((post) => (
+                  <li key={post.documentId ?? post.slug}>
+                    <PostRow post={post} />
+                  </li>
+                ))}
+              </ul>
+            ) : null}
+          </div>
         )}
       </section>
       <Footer />
+      <Motion />
     </main>
   );
 }

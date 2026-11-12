@@ -5,13 +5,16 @@ import HowItWorks from "@/components/how-it-works";
 import ChatDemo from "@/components/chat-demo";
 import TheCard from "@/components/the-card";
 import WhyRizely from "@/components/why-rizely";
-import Proof from "@/components/proof";
+// Nov 2026: the drag-to-compare Proof is replaced by the scroll-scrubbed Pipeline
+// (components/proof.tsx is kept, unused, so it can come back).
+import Pipeline from "@/components/pipeline";
 import Personas from "@/components/personas";
 import ClaudeChat from "@/components/claude-chat";
 import Pricing from "@/components/pricing";
 import Faq from "@/components/faq";
 import Footer from "@/components/footer";
 import MobileCtaBar from "@/components/mobile-cta-bar";
+import Motion from "@/components/motion";
 
 /*
   Positioning: the homepage sells one thing to one buyer — event follow-up for
@@ -30,18 +33,22 @@ export default function Home() {
           surface, not divider lines). */}
       <Hero />
       <Partners />
-      <div className="bg-parchment">
+      {/* Dark rooms (Nov 2026): How it works, Why Rizely and Works with Claude sit
+          on near-black so the page swings light / dark; product UI inside stays light. */}
+      <div className="section-dark" data-room>
         <HowItWorks />
       </div>
       <ChatDemo />
-      <div className="bg-parchment">
+      <div className="section-dark" data-room>
         <WhyRizely />
       </div>
-      <Proof />
+      <Pipeline />
       <div className="bg-parchment">
         <Personas />
       </div>
-      <ClaudeChat />
+      <div className="section-dark" data-room>
+        <ClaudeChat />
+      </div>
       <div className="bg-parchment">
         <TheCard />
       </div>
@@ -51,6 +58,7 @@ export default function Home() {
       </div>
       <Footer />
       <MobileCtaBar />
+      <Motion />
     </main>
   );
 }

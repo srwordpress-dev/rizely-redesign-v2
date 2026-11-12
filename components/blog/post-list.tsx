@@ -61,3 +61,70 @@ export function PostCard({
     </Link>
   );
 }
+
+/*
+  /blogs (Nov 2026 redesign): the newest post as a wide feature, the rest as
+  editorial rows with a hover line and arrow, like the footer links.
+*/
+export function PostFeature({ post }: { post: Article }) {
+  const cover = mediaUrl(post.cover?.url);
+  const iso = articleDate(post);
+  const date = formatDate(iso);
+  return (
+    <Link
+      href={`/blogs/${post.slug}`}
+      className="post-feature group grid gap-8 border-t border-hairline pt-10 lg:grid-cols-12 lg:items-center lg:gap-12"
+    >
+      {cover ? (
+        <div className="overflow-hidden rounded-xl border border-border lg:col-span-7">
+          {/* eslint-disable-next-line @next/next/no-img-element -- CMS image, static export */}
+          <img
+            src={cover}
+            alt={post.cover?.alternativeText ?? ""}
+            className="post-card-cover aspect-[16/9] w-full object-cover"
+          />
+        </div>
+      ) : null}
+      <div className={`flex flex-col gap-4 ${cover ? "lg:col-span-5" : "lg:col-span-9"}`}>
+        <span className="kicker">{post.category ?? "Latest"}</span>
+        <h2 className="text-3xl font-heading font-bold leading-tight tracking-tight text-balance sm:text-4xl">
+          {post.title}
+        </h2>
+        {post.excerpt ? <p className="text-lg leading-relaxed text-muted-foreground">{post.excerpt}</p> : null}
+        <span className="flex flex-wrap items-center gap-x-2 text-sm text-muted-foreground">
+          {date ? <time dateTime={iso ?? undefined}>{date}</time> : null}
+          {date ? <span aria-hidden>·</span> : null}
+          <span>{readingTime(post)} min read</span>
+        </span>
+        <span className="blog-more">
+          Read it <span aria-hidden="true">→</span>
+        </span>
+      </div>
+    </Link>
+  );
+}
+
+export function PostRow({ post }: { post: Article }) {
+  const iso = articleDate(post);
+  const date = formatDate(iso);
+  return (
+    <Link
+      href={`/blogs/${post.slug}`}
+      className="post-row group grid gap-2 border-t border-hairline py-7 md:grid-cols-12 md:items-baseline md:gap-8"
+    >
+      <span className="text-sm text-muted-foreground md:col-span-2">
+        {date ? <time dateTime={iso ?? undefined}>{date}</time> : null}
+      </span>
+      <span className="flex flex-col gap-1 md:col-span-8">
+        <h2 className="font-serif-display text-2xl leading-snug text-balance">
+          <span className="post-row-title">{post.title}</span>
+        </h2>
+        {post.excerpt ? <span className="text-[15px] leading-relaxed text-muted-foreground">{post.excerpt}</span> : null}
+      </span>
+      <span className="flex items-center justify-between gap-3 text-sm text-muted-foreground md:col-span-2 md:justify-end">
+        {readingTime(post)} min read
+        <ArrowRight aria-hidden="true" className="post-card-arrow size-4 shrink-0 text-primary" />
+      </span>
+    </Link>
+  );
+}

@@ -129,13 +129,17 @@
   .iphone .screen { border-radius: 37px; }
   .samsung .screen { border-radius: 29px; }
 
-  /* camera cutouts */
+  /* camera cutouts. Both sit on .frame, so their top = the frame's padding (the
+     bezel) + the gap inside the screen. Scaled from the real phones to a 280px
+     screen: iPhone Dynamic Island 126x37pt, 11pt below the screen edge -> 88x26
+     at 8px; Android punch hole ~11px, centred in a 32px status bar -> 10px down.
+     The status bars are sized so the time and icons share the cutout's centre. */
   .island {
-    position: absolute; top: 9px; left: 50%; transform: translateX(-50%);
-    width: 84px; height: 24px; background: #000; border-radius: 999px; z-index: 7;
+    position: absolute; top: calc(10px + 8px); left: 50%; transform: translateX(-50%);
+    width: 88px; height: 26px; background: #000; border-radius: 999px; z-index: 7;
   }
   .punch {
-    position: absolute; top: 9px; left: 50%; transform: translateX(-50%);
+    position: absolute; top: calc(7px + 10px); left: 50%; transform: translateX(-50%);
     width: 11px; height: 11px; background: #000; border-radius: 50%; z-index: 7;
     box-shadow: 0 0 0 2px rgba(0,0,0,0.35);
   }
@@ -150,7 +154,10 @@
   .statusbar .icons svg { width: 16px; height: 12px; }
   .wa-app .statusbar { background: var(--wa-header); color: #111b21; }
   .tg-app .statusbar { background: var(--tg-header); color: #17181a; }
-  .samsung .statusbar { padding-top: 0.85rem; }
+  /* iPhone: a 42px bar centres on the island (8px + 26px / 2 = 21px). */
+  .iphone .statusbar { box-sizing: border-box; height: 42px; padding: 0 1.5rem; }
+  /* Android: a 31px bar centres on the punch hole (10px + 11px / 2 = 15.5px). */
+  .samsung .statusbar { box-sizing: border-box; height: 31px; padding: 0 1.1rem; }
 
   /* chat header */
   .chead {

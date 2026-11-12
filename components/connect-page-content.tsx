@@ -1,52 +1,43 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { WHATSAPP_URL } from "@/lib/site";
-import {
-  UserPlus,
-  Search,
-  CalendarDays,
-  Download,
-  Wallet,
-  ListChecks,
-  ShieldCheck,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import PageHero, { SectionHead } from "@/components/page-hero";
+import { StartCta } from "@/components/start-cta";
+import Scribble from "@/components/scribble";
+import Motion from "@/components/motion";
 
-type Capability = { icon: LucideIcon; title: string; desc: string };
+/*
+  /connect (Nov 2026 redesign, matching the homepage): asymmetric hero with the
+  one hand-drawn underline, what you can do as an editorial grid (no icon
+  tiles), where it works as two status lines, the three steps in a dark room,
+  and the honest limits. Motion is the shared minimal set.
+*/
 
-const capabilities: Capability[] = [
+const capabilities = [
   {
-    icon: UserPlus,
-    title: "Add & update contacts",
+    title: "Add and update contacts",
     desc: "Share a card photo and Claude reads it and adds the contact, or describe someone in your own words. Editing a lead only changes the fields you name; nothing else is touched.",
   },
   {
-    icon: Search,
-    title: "Find & segment your pipeline",
-    desc: "Ask for a slice by free text, event, tag, capture channel or date range — or only the leads that have a phone number or an email. Get the shortlist without opening a dashboard.",
+    title: "Find and segment your pipeline",
+    desc: "Ask for a slice by free text, event, tag, capture channel or date range, or only the leads that have a phone number or an email. Get the shortlist without opening a dashboard.",
   },
   {
-    icon: CalendarDays,
     title: "Organise events",
     desc: "Create or close an event, list what's open, and pull every lead from one event.",
   },
   {
-    icon: ListChecks,
     title: "See what just came in",
-    desc: "Pull your most recent scans with their extracted fields and links to the card photo and any voice note, so you can review a batch straight after a show.",
+    desc: "Pull your most recent scans with their fields and links to the card photo and any voice note, so you can review a batch straight after a show.",
   },
   {
-    icon: Download,
     title: "Export to CSV",
-    desc: "Get your contacts as a CSV (up to 500 at a time) to open in a spreadsheet or import anywhere. It's an export, not a sync.",
+    desc: "Get your contacts as a CSV, up to 500 at a time, to open in a spreadsheet or import anywhere. It's an export, not a sync.",
   },
   {
-    icon: Wallet,
-    title: "Check balance & top up",
-    desc: "See your plan, balance and which WhatsApp/Telegram numbers are linked. Top up over UPI — the payment always finishes safely in your browser, never in the chat.",
+    title: "Check balance and top up",
+    desc: "See your plan, balance and which WhatsApp or Telegram numbers are linked. Top up over UPI; the payment always finishes safely in your browser, never in the chat.",
   },
 ];
 
@@ -59,7 +50,7 @@ const steps = [
   {
     n: "2",
     title: "Add Rizely in Claude",
-    desc: "Add Rizely as a connector and sign in. It's OAuth, scoped to your own account — you're always in control of access.",
+    desc: "Add Rizely as a connector and sign in. It's OAuth, scoped to your own account, so you're always in control of access.",
   },
   {
     n: "3",
@@ -69,141 +60,103 @@ const steps = [
 ];
 
 const limits = [
-  "A pipeline search returns a focused shortlist, not your entire database — an export gives you up to 500 contacts at a time; the dashboard exports the rest.",
+  "A pipeline search returns a focused shortlist, not your whole database. An export gives you up to 500 contacts at a time; the dashboard exports the rest.",
   "Export is one-way: a CSV copy of your contacts. It isn't a live sync.",
-  "Payments always complete in your browser over UPI — never inside the chat.",
-  "It's a window onto your pipeline, not a standalone product — you'll need a Rizely account with WhatsApp or Telegram linked.",
-  "Rizely's own card scanning runs in the WhatsApp/Telegram bot; in Claude, Claude reads the photo and adds the details itself.",
+  "Payments always complete in your browser over UPI, never inside the chat.",
+  "It's a window onto your pipeline, not a separate product: you'll need a Rizely account with WhatsApp or Telegram linked.",
+  "Rizely's own card scanning runs in the WhatsApp or Telegram bot; in Claude, Claude reads the photo and adds the details itself.",
 ];
 
 export default function ConnectPageContent() {
   return (
-    <main className="flex flex-col min-h-dvh">
-      {/* Hero */}
-      <section className="relative overflow-hidden">
-        <div className="max-w-(--breakpoint-xl) mx-auto px-4 pt-20 pb-12 md:pt-28 md:px-8 text-center">
-          <span className="w-fit mx-auto inline-flex items-center gap-2 text-xs sm:text-sm bg-brand-teal/10 px-3 py-1 border border-brand-teal/30 rounded-full text-brand-teal mb-6">
-            <span className="size-1.5 rounded-full bg-brand-teal" /> Live on Claude today
+    <main className="flex min-h-dvh flex-col">
+      <PageHero
+        kicker={
+          <span className="inline-flex items-center gap-2">
+            <span aria-hidden="true" className="size-1.5 rounded-full bg-spark" />
+            Live on Claude today
           </span>
-          <h1 className="text-4xl font-heading font-extrabold tracking-tight md:text-5xl text-balance leading-[1.05] max-w-3xl mx-auto">
-            Run your pipeline from inside <span className="text-sunrise">Claude</span>.
-          </h1>
-          <p className="mt-6 max-w-2xl mx-auto text-base sm:text-lg text-muted-foreground text-balance">
-            Rizely connects to the AI assistant you already use. Add and find contacts, organise
-            events, pull an event's leads, export your leads and top up — all in plain language, without
-            learning a dashboard. Live on Claude now; ChatGPT is next.
-          </p>
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Button asChild size="lg" className="h-12 px-6 text-base font-semibold">
-              <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
-                Start free on WhatsApp
-              </Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="h-12 px-6 text-base">
-              <Link href="#how-to-connect">How to connect</Link>
-            </Button>
-          </div>
-        </div>
-        <div className="w-full h-full absolute -top-40 left-1/2 -translate-x-1/2 flex justify-center items-start pointer-events-none -z-10">
-          <div className="w-[42rem] h-80 bg-light blur-[130px] rounded-full opacity-25" />
-        </div>
-      </section>
+        }
+        title={
+          <>
+            Run your pipeline from inside <Scribble>Claude</Scribble>
+            <span className="text-spark">.</span>
+          </>
+        }
+        lede="Rizely connects to the AI assistant you already use. Add and find contacts, organise events, pull an event's leads, export them and top up, all in plain language and without learning a dashboard. Live on Claude now; ChatGPT is next."
+      >
+        <StartCta size="lg" className="h-12 w-full px-6 text-base font-semibold sm:w-auto" />
+        <Button asChild size="lg" variant="outline" className="h-12 px-6 text-base">
+          <Link href="#how-to-connect">How to connect</Link>
+        </Button>
+      </PageHero>
 
       {/* What you can do */}
-      <section className="max-w-(--breakpoint-xl) mx-auto w-full px-4 py-16 md:px-8">
-        <div className="text-center mb-12 max-w-2xl mx-auto">
-          <span className="text-xs font-semibold uppercase tracking-widest text-primary">
-            What you can do
-          </span>
-          <h2 className="mt-3 text-3xl font-heading font-bold sm:text-4xl tracking-tight">
-            Your whole pipeline, in plain language
-          </h2>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
-          {capabilities.map((cap, index) => {
-            const Icon = cap.icon;
-            return (
-              <motion.div
-                key={cap.title}
-                initial={{ y: 16, opacity: 0 }}
-                whileInView={{ y: 0, opacity: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.06 }}
-                className="rounded-2xl border border-border bg-card p-5"
-              >
-                <div className="grid size-10 place-items-center rounded-xl border border-primary/30 bg-peach text-primary mb-3">
-                  <Icon aria-hidden="true" className="size-5" />
-                </div>
-                <h3 className="font-heading font-semibold mb-1">{cap.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed">{cap.desc}</p>
-              </motion.div>
-            );
-          })}
+      <section className="w-full border-t border-hairline">
+        <div className="mx-auto max-w-(--breakpoint-xl) px-4 py-20 md:px-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+            <SectionHead kicker="What you can do" title="Your whole pipeline, in plain language." />
+            <ul className="flex flex-col gap-2 text-[15px]" aria-label="Where it works">
+              <li className="cn-where">
+                <span className="cn-dot is-live" aria-hidden="true" />
+                <b>Claude</b>
+                <span>live now: web, desktop app and Claude Code</span>
+              </li>
+              <li className="cn-where">
+                <span className="cn-dot" aria-hidden="true" />
+                <b>ChatGPT</b>
+                <span>next, once it works as well as Claude does</span>
+              </li>
+            </ul>
+          </div>
+          <ul className="mt-12 grid gap-x-12 sm:grid-cols-2 lg:grid-cols-3">
+            {capabilities.map((c) => (
+              <li key={c.title} data-wr-row className="relative flex flex-col gap-2 py-7">
+                <span aria-hidden="true" className="wr-rule" />
+                <h3 data-wr-body className="font-serif-display text-xl leading-snug sm:text-[1.375rem]">
+                  {c.title}
+                </h3>
+                <p data-wr-body className="text-[15px] leading-relaxed text-muted-foreground">
+                  {c.desc}
+                </p>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
-      {/* Where it works */}
-      <section className="max-w-4xl mx-auto w-full px-4 py-6 md:px-8">
-        <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-2xl border border-brand-teal/30 bg-brand-teal/5 p-6">
-            <h3 className="font-heading font-semibold mb-1 flex items-center gap-2">
-              <span className="size-2 rounded-full bg-brand-teal" /> Claude — live now
-            </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Works in Claude on the web, the desktop app, and Claude Code. Connect once and go.
-            </p>
-          </div>
-          <div className="rounded-2xl border border-border bg-card p-6">
-            <h3 className="font-heading font-semibold mb-1 flex items-center gap-2">
-              <span className="size-2 rounded-full bg-muted-foreground/50" /> ChatGPT — next
-            </h3>
-            <p className="text-sm text-muted-foreground leading-relaxed">
-              Not supported yet. We&apos;ll add it once it works as well as Claude does.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* How to connect */}
-      <section id="how-to-connect" className="max-w-4xl mx-auto w-full px-4 py-16 md:px-8">
-        <div className="text-center mb-12 max-w-2xl mx-auto">
-          <span className="text-xs font-semibold uppercase tracking-widest text-primary">
-            How to connect
-          </span>
-          <h2 className="mt-3 text-3xl font-heading font-bold sm:text-4xl tracking-tight">
-            Three steps, no setup call
-          </h2>
-        </div>
-        <div className="grid gap-5 sm:grid-cols-3">
-          {steps.map((step, index) => (
-            <motion.div
-              key={step.n}
-              initial={{ y: 16, opacity: 0 }}
-              whileInView={{ y: 0, opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="rounded-2xl border border-border bg-card p-6"
-            >
-              <div className="grid size-9 place-items-center rounded-full bg-sunrise text-white font-heading font-bold text-sm mb-4">
-                {step.n}
-              </div>
-              <h3 className="font-heading font-semibold mb-1">{step.title}</h3>
-              <p className="text-sm text-muted-foreground leading-relaxed">{step.desc}</p>
-            </motion.div>
-          ))}
-        </div>
-      </section>
+      {/* How to connect: three real steps, in a dark room. */}
+      <div id="how-to-connect" className="section-dark scroll-mt-16" data-room>
+        <section className="mx-auto max-w-(--breakpoint-xl) px-4 py-24 md:px-8">
+          <SectionHead kicker="How to connect" title="Three steps, no setup call." />
+          <ol className="cn-steps mt-14 grid gap-10 md:grid-cols-3 md:gap-8">
+            {steps.map((s) => (
+              <li key={s.n} data-wr-row className="relative flex flex-col gap-3 pt-8">
+                <span aria-hidden="true" className="wr-rule" />
+                <span data-wr-body className="cn-num">
+                  {s.n}
+                </span>
+                <h3 data-wr-body className="font-serif-display text-2xl leading-tight">
+                  {s.title}
+                </h3>
+                <p data-wr-body className="text-[15px] leading-relaxed text-muted-foreground">
+                  {s.desc}
+                </p>
+              </li>
+            ))}
+          </ol>
+        </section>
+      </div>
 
       {/* Honest limits */}
-      <section className="max-w-3xl mx-auto w-full px-4 py-8 md:px-8">
-        <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
-          <h3 className="font-heading font-semibold flex items-center gap-2 mb-4">
-            <ShieldCheck aria-hidden="true" className="size-5 text-brand-teal" /> Straight about the edges
-          </h3>
-          <ul className="space-y-3">
+      <section className="w-full">
+        <div className="mx-auto grid max-w-(--breakpoint-xl) gap-10 px-4 py-20 md:px-8 lg:grid-cols-12 lg:gap-12">
+          <div className="lg:col-span-4">
+            <SectionHead kicker="Straight about the edges" title="What it does not do." />
+          </div>
+          <ul className="lg:col-span-8 border-b border-line">
             {limits.map((l) => (
-              <li key={l} className="flex items-start gap-2 text-sm text-muted-foreground leading-relaxed">
-                <span className="mt-1.5 size-1.5 shrink-0 rounded-full bg-muted-foreground/50" />
+              <li key={l} className="border-t border-line py-4 text-[16px] leading-relaxed text-muted-foreground">
                 {l}
               </li>
             ))}
@@ -211,26 +164,22 @@ export default function ConnectPageContent() {
         </div>
       </section>
 
-      {/* Closing CTA */}
-      <section className="max-w-2xl mx-auto px-4 py-16 md:px-8 text-center">
-        <h2 className="text-2xl font-heading font-bold sm:text-3xl tracking-tight text-balance">
-          Bring your event pipeline into the chat.
-        </h2>
-        <p className="mt-4 text-muted-foreground">
-          Start on WhatsApp, connect Rizely in Claude, and run your leads by just asking. Your
-          first 50 scans are free.
-        </p>
-        <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
-          <Button asChild size="lg">
-            <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
-              Start free on WhatsApp
-            </Link>
-          </Button>
-          <Button asChild size="lg" variant="outline">
-            <Link href="/agents">Meet the agents</Link>
-          </Button>
+      {/* Close */}
+      <section className="w-full border-t border-hairline">
+        <div className="mx-auto flex max-w-(--breakpoint-xl) flex-col gap-6 px-4 py-20 md:px-8 lg:flex-row lg:items-end lg:justify-between">
+          <SectionHead
+            title="Bring your event pipeline into the chat."
+            sub="Start on WhatsApp, connect Rizely in Claude, and run your leads by asking. Your first 50 scans are free."
+          />
+          <div className="flex flex-col gap-3 sm:flex-row">
+            <StartCta size="lg" className="h-12 px-6 text-base font-semibold" />
+            <Button asChild size="lg" variant="outline" className="h-12 px-6 text-base">
+              <Link href="/agents">Meet the agents</Link>
+            </Button>
+          </div>
         </div>
       </section>
+      <Motion />
     </main>
   );
 }

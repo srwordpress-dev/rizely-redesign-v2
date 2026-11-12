@@ -23,10 +23,12 @@ const END = 8200;
 const AT = [1100, 3400, 5700]; // when the line reaches each stop
 const W = 1088;
 
+// Each stop names the moment, not a clock time (Nov 2026: the times read as
+// fussy). The orange line is when it happens; the grey line is what you have.
 const STOPS = [
-  { time: "10:42", when: "At the stall" },
-  { time: "10:43", when: "Right after" },
-  { time: "19:30", when: "Same evening" },
+  { time: "At the stall", when: "one photo" },
+  { time: "Seconds later", when: "one clean lead" },
+  { time: "Same evening", when: "one ready follow-up" },
 ];
 
 const STEPS = [
@@ -43,6 +45,7 @@ const FIELDS = [
 ];
 
 const show = (on: boolean) => (on ? "is-on" : "");
+
 
 function Visual({ i, t }: { i: number; t: number }) {
   if (i === 0) {
@@ -213,16 +216,21 @@ export default function HowItWorks() {
         transition={{ duration: 0.6, type: "spring", bounce: 0 }}
         className="mb-12 grid w-full max-w-[1088px] gap-6 text-left lg:grid-cols-[auto_1fr] lg:items-end lg:gap-14"
       >
-        {/* The whole trip in two times: the page's one oversized, off-grid moment. */}
-        <p aria-hidden="true" className="big-clock">
-          10:42<span className="arrow"> → </span>19:30
+        {/* The hook, oversized: the page's one deliberate off-grid moment. */}
+        <p className="big-hook">
+          Card in.
+          <br />
+          Reply out<span className="dot">.</span>
         </p>
         <div className="flex flex-col gap-3">
           <SectionKicker no="01">How it works</SectionKicker>
           <h2 className="text-3xl font-heading font-bold sm:text-4xl tracking-tight text-balance">
-            From a card in your hand to a reply in their inbox.
+            You snap. Rizely does the rest.
           </h2>
-          <p className="text-muted-foreground text-lg">One card, one evening. Here is the whole trip.</p>
+          <p className="text-muted-foreground text-lg">
+            One photo at the stall becomes a filed lead and a follow-up in their language, ready
+            before you leave for the night.
+          </p>
         </div>
       </motion.div>
 

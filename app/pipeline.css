@@ -1,0 +1,193 @@
+/* 04 · What one event turns into: the pile becomes a pipeline (components/pipeline.tsx). */
+
+.pl-frame {
+  position: relative;
+  max-width: 1100px;
+  margin-inline: auto;
+  aspect-ratio: 1100 / 500;
+  overflow: hidden;
+  border-radius: 20px;
+  border: 1px solid var(--hairline);
+}
+.pl-frame.is-narrow {
+  max-width: 420px;
+  aspect-ratio: 360 / 720;
+}
+/* Before JS measures: the same switch point (760px of content + 32-64px padding). */
+@media (max-width: 823px) {
+  .pl-frame { max-width: 420px; aspect-ratio: 360 / 720; }
+}
+
+.pl-stage {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform-origin: 0 0;
+  background: #ece9e3; /* the warm desk: "before" */
+  transition: background-color 400ms ease, opacity 200ms ease;
+}
+.pl-stage.is-late { background: var(--parchment); }
+
+.pl-tag,
+.pl-done {
+  position: absolute;
+  top: 16px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.pl-tag { left: 20px; background: #fff; color: var(--graphite); }
+.pl-done { right: 20px; background: var(--ink); color: #fff; }
+
+.pl-note {
+  position: absolute;
+  width: 140px;
+  padding: 10px 12px;
+  box-sizing: border-box;
+  background: #fff8e7;
+  box-shadow: 0 4px 10px rgb(10 10 10 / 0.12);
+  rotate: 5deg;
+  font-family: var(--font-hand), "Kalam", cursive;
+  font-size: 20px;
+  line-height: 1.1;
+  color: var(--graphite);
+}
+.pl-note span { display: block; font-size: 15px; }
+
+.pl-day {
+  position: absolute;
+  width: 78px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 4px 10px rgb(10 10 10 / 0.12);
+  text-align: center;
+}
+.pl-day span {
+  display: block;
+  padding: 4px 0;
+  background: #8a8a85;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+.pl-day b {
+  display: block;
+  font-family: var(--font-display), "Bricolage Grotesque", system-ui, sans-serif;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--graphite);
+}
+
+.pl-card {
+  position: absolute;
+  left: 0;
+  top: 0;
+  box-sizing: border-box;
+  padding: 13px;
+  border-radius: 6px;
+  background: #fff;
+  box-shadow: 0 4px 10px rgb(10 10 10 / 0.12), 0 0 0 1px rgb(10 10 10 / 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  will-change: transform;
+}
+.pl-card span { display: block; height: 6px; border-radius: 2px; }
+.pl-card span:nth-child(1) { width: 70%; background: #2b2b29; }
+.pl-card span:nth-child(2) { width: 45%; height: 5px; background: #bdbdb9; }
+.pl-card span:nth-child(3) { width: 85%; height: 4px; margin-top: auto; background: #e7e7e5; }
+
+.pl-phone {
+  position: absolute;
+  box-sizing: border-box;
+  padding: 7px;
+  border-radius: 28px;
+  background: #0a0a0a;
+  box-shadow: 0 24px 50px rgb(10 10 10 / 0.25);
+  z-index: 2;
+}
+.pl-screen {
+  height: 100%;
+  border-radius: 22px;
+  overflow: hidden;
+  background: #efeae2;
+  display: flex;
+  flex-direction: column;
+}
+.pl-chat-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 20px 12px 10px;
+  background: #f7f7f4;
+  font-size: 13px;
+}
+.pl-avatar { width: 24px; height: 24px; border-radius: 50%; background: var(--cta); }
+.pl-chat {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 7px;
+  padding: 10px;
+  font-size: 11px;
+  line-height: 1.4;
+}
+.pl-out,
+.pl-in { padding: 7px 9px; border-radius: 10px; }
+.pl-out { align-self: flex-end; background: #d9fdd3; }
+.pl-in { background: #fff; }
+.pl-in b { font-family: var(--font-display), "Bricolage Grotesque", system-ui, sans-serif; font-size: 14px; font-variant-numeric: tabular-nums; }
+
+.pl-row {
+  position: absolute;
+  left: 0;
+  top: 0;
+  box-sizing: border-box;
+  padding: 0 16px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--hairline), 0 6px 14px rgb(10 10 10 / 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transform-origin: 0 50%;
+  will-change: transform;
+  z-index: 3;
+}
+.pl-row > span { display: flex; flex-direction: column; min-width: 0; }
+.pl-row b { font-size: 15px; }
+.pl-row small { font-size: 12px; color: var(--graphite); }
+.pl-pill {
+  flex-shrink: 0;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--peach);
+  color: #8a2e00;
+  transition: background-color 250ms ease, color 250ms ease;
+}
+.pl-pill.is-sent { background: var(--ink); color: #fff; }
+
+.is-narrow .pl-row b { font-size: 14px; }
+.is-narrow .pl-chat { font-size: 10px; }
+.is-narrow .pl-chat-head { padding-top: 14px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pl-stage, .pl-pill { transition: none; }
+}
+
+.pl-ghost {
+  position: absolute;
+  box-sizing: border-box;
+  border: 1.5px dashed var(--line-strong);
+  border-radius: 8px;
+}

@@ -5,10 +5,11 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { WhatsAppIcon } from "@/components/whatsapp-icon";
 import { WHATSAPP_URL } from "@/lib/site";
+import { MOBILE_START } from "@/components/start-cta";
 
 /*
   Phones only (under 640px): once the hero's own CTAs have scrolled away, a bar
-  with "Start free on WhatsApp" sits at the bottom of the screen. It steps aside
+  with "Start on your WhatsApp" sits at the bottom of the screen. It steps aside
   wherever the page already offers that choice (pricing, the FAQ, the closing
   CTA) and while the cookie banner is open, so two calls to action never stack.
 */
@@ -66,7 +67,7 @@ export default function MobileCtaBar() {
       <Button asChild size="lg" className="cta-sunrise h-12 w-full text-base font-semibold">
         <Link href={WHATSAPP_URL} target="_blank" rel="noopener noreferrer">
           <WhatsAppIcon className="size-5" />
-          Start free on WhatsApp
+          {MOBILE_START}
         </Link>
       </Button>
     </div>
